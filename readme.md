@@ -1,81 +1,78 @@
-Berikut adalah contoh `README.md` sederhana dan informatif untuk proyek **Sistem Parkir Sederhana** menggunakan **Node.js v20.19.3**, Express, dan Excel (`xlsx`) sebagai penyimpanan:
+Berikut contoh `README.md` sederhana dan lengkap untuk proyek **aplikasi parkir sederhana** berbasis **Node.js 20.19.3** yang menyimpan data ke **Excel (XLSX)**:
 
 ---
 
-```markdown
-# 🚗 Sistem Parkir Sederhana (Node.js + Excel)
+````markdown
+# 🚗 Simple Parking App
 
-Sistem parkir berbasis web sederhana yang dibangun dengan **Node.js v20.19.3**. Data parkir disimpan dalam file **Excel (`parkir.xlsx`)** sebagai alternatif dari database.
+Aplikasi parkir sederhana berbasis **Node.js** untuk belajar **CRUD, pencarian, sorting**, dan manipulasi **file Excel (XLSX)**.
 
----
-
-## 🛠 Teknologi yang Digunakan
-
-- **Node.js v20.19.3**
-- **Express.js**
-- **xlsx** (untuk membaca & menulis file Excel)
-- **HTML + JavaScript** (frontend)
-- **Bootstrap** (UI)
+> ✅ Cocok untuk pemula yang ingin belajar server Node.js tanpa database.
 
 ---
 
-## 📁 Struktur Folder
+## 🧰 Teknologi
 
-```
-
-simple-parking-app/
-├── data/
-│   └── parkir.xlsx         # File Excel untuk data parkir
-├── public/
-│   ├── index.html          # Halaman utama
-│   └── script.js           # JavaScript frontend
-├── server.js               # Server Node.js
-├── generateParkir.js       # Generate 20 slot awal
-└── README.md               # Dokumentasi ini
-
-````
+- Node.js v20.19.3
+- Express.js
+- xlsx (library Excel untuk Node.js)
+- HTML + JavaScript (frontend)
+- Bootstrap (untuk tampilan)
+- Disimpan dalam file `parkir.xlsx`
 
 ---
 
-## ✅ Fitur
+## 📦 Fitur
 
-- Tambah data parkir (Masuk)
-- Keluar kendaraan dan update waktu keluar
-- Sistem slot tetap (`KP001` hingga `KP020`)
-- Menyimpan data ke Excel (tanpa database)
-- Menampilkan data ke tabel HTML
+- Menambahkan kendaraan masuk
+- Menandai kendaraan keluar
+- Kode parkir tetap dari `KP001` s.d. `KP020` (20 slot)
+- Menyimpan ke Excel (bisa dibuka pakai Microsoft Excel)
+- Menampilkan data parkir ke halaman web
+- Auto format tanggal dan waktu masuk/keluar
 
 ---
 
-## 🚀 Cara Menjalankan
+## 🚀 Instalasi
 
-### 1. Clone Repo (atau buat folder baru)
+### 1. Clone Repository
+
 ```bash
-git clone <repo-url>
+git clone <repository-url>
 cd simple-parking-app
 ````
 
-### 2. Install Dependency
+### 2. Install Dependensi
 
 ```bash
 npm install
 ```
 
-### 3. Buat file Excel dengan 20 slot kosong
+### 3. Buat Folder Data dan File Awal
 
 ```bash
 node generateParkir.js
 ```
 
+> Ini akan membuat `data/parkir.xlsx` dengan 20 slot kosong.
+
 ### 4. Jalankan Server
 
 ```bash
-node server.js
-# atau jika pakai nodemon:
-# nodemon server.js
+nodemon server.js
 ```
 
-### 5. Buka di Browser
+Atau jika tidak pakai nodemon:
+
+```bash
+node server.js
+```
+
+---
+
+## 🌐 Akses Website
+
+Buka di browser:
 
 ```
 http://localhost:3000
@@ -83,11 +80,30 @@ http://localhost:3000
 
 ---
 
-## 📄 API Endpoint
+## 📝 Struktur File
 
-### POST `/formMasuk`
+```
+simple-parking-app/
+├── public/
+│   ├── index.html      # halaman utama
+│   ├── script.js       # logic client-side
+├── data/
+│   └── parkir.xlsx     # file Excel yang menyimpan data parkir
+├── server.js           # server utama Node.js
+├── generateParkir.js   # script untuk membuat file Excel awal
+├── package.json
+└── README.md
+```
 
-Menambahkan kendaraan masuk ke slot kosong.
+---
+
+## 🛠 API
+
+### `POST /formMasuk`
+
+> Tambahkan kendaraan masuk ke slot kosong.
+
+**Body (JSON):**
 
 ```json
 {
@@ -97,9 +113,13 @@ Menambahkan kendaraan masuk ke slot kosong.
 }
 ```
 
-### POST `/keluar`
+---
 
-Mengisi kolom tanggal keluar berdasarkan plat.
+### `POST /keluar`
+
+> Tandai kendaraan keluar berdasarkan plat.
+
+**Body (JSON):**
 
 ```json
 {
@@ -108,19 +128,4 @@ Mengisi kolom tanggal keluar berdasarkan plat.
 ```
 
 ---
-
-## 📦 Dependency
-
-```bash
-npm install express body-parser xlsx
-```
-
-Opsional (development):
-
-```bash
-npm install -g nodemon
-```
-
-
-
 
