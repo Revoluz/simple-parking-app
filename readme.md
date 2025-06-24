@@ -1,15 +1,5 @@
-Berikut contoh `README.md` sederhana dan lengkap untuk proyek **aplikasi parkir sederhana** berbasis **Node.js 20.19.3** yang menyimpan data ke **Excel (XLSX)**:
 
----
 
-````markdown
-# 🚗 Simple Parking App
-
-Aplikasi parkir sederhana berbasis **Node.js** untuk belajar **CRUD, pencarian, sorting**, dan manipulasi **file Excel (XLSX)**.
-
-> ✅ Cocok untuk pemula yang ingin belajar server Node.js tanpa database.
-
----
 
 ## 🧰 Teknologi
 
