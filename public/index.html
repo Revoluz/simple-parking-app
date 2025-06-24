@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parkir Sederhana</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+
+</head>
+<body class="bg-body-secondary">
+    <h1>Sistem Parkir</h1>
+    <div class=" ">
+      <div class="row justify-content-around">
+        <div class="col-5 bg-white p-0 d-flex flex-column">
+          <div class="d-flex justify-content-between bg-primary text-white p-2">
+            <h3 class="m-0">Masuk Parkir</h3>
+            <h3 class="m-0">Empty : 200</h3>
+          </div>
+          <form action="" id="formMasuk" class="d-flex flex-column">
+            <div class="d-flex p-2">
+            <div class="w-50 ">
+              <div class="mb-3 ">
+                <label for="plat-nomor" class="form-label">Plat Nomor</label>
+                <input type="txt" class="form-control" id="plat-nomor" aria-describedby="plat-nomor" placeholder="Plat Nomor Kendaraan">
+              </div>
+              <div class="mb-3">
+                <label for="merek" class="form-label">Merek Kendaraan</label>
+                <input type="text" class="form-control" id="merek" placeholder="Merek Kendaraan">
+              </div>
+            </div>
+            <div class="w-50 ms-4">
+              <p for="" class="mb-1">Jenis Kendaraan</p>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="jenisKendaraan" id="motor" value="motor">
+                <label class="form-check-label" for="motor">
+                  Motor
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="jenisKendaraan" id="Mobil" value="mobil" >
+                <label class="form-check-label" for="Mobil">
+                  Mobil
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="jenisKendaraan" id="lainnya" value="Truk/Bus/Lainnya">
+                <label class="form-check-label" for="lainnya">
+                  Truk / Bus /Lainnya
+                </label>
+              </div>
+            </div>
+          </div>
+            <button type="submit" class="btn btn-primary m-2">Submit</button>
+          </form>
+        </div>
+        <div class="col-5 bg-white p-0 d-flex flex-column">
+          <div class="d-flex justify-content-between bg-primary text-white p-2">
+            <h3 class="m-0">Keluar Parkir</h3>
+          </div>
+          <form action="" id="formKeluar" class="d-flex flex-column h-100">
+            <div class="d-flex p-2">
+            <div class="w-50 ">
+              <div class="mb-3 ">
+                <label for="Kode" class="form-label">Kode</label>
+                <input type="txt" class="form-control" id="Kode" aria-describedby="Kode" placeholder="Kode Parkir">
+              </div>
+            </div>
+          </div>
+            <button type="submit" class="btn btn-primary m-2 w-25">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <p id="hasil">
+
+    </p>
+    <div id="data" class="row justify-content-center " >
+      <div class="col-11 bg-white">
+        <div class="d-flex justify-content-between bg-primary text-white p-2 mt-3">
+          <h3 class="m-0">Daftar Parkir Kendaraan</h3>
+        </div>
+
+      <table class="table  table-striped " id="tabelParkir">
+        <thead>
+          <tr>
+              <th >Kode</th>
+              <th >Plat Nomor</th>
+              <th >Jenis</th>
+              <th >Merek</th>
+              <th >Tanggal Masuk</th>
+          </tr>
+      </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+
+    </div>
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+
+</body>
+</html>
