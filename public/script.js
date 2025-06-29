@@ -183,14 +183,22 @@ async function searchData() {
   const data = await res.json();
 
   let hasil = [];
-
+  let dataArr = [];
+  for (let i = 0; i < data.length; i++) {
+    dataArr[i] = [];
+    dataArr[i][0] = data[i]["Kode Parkir"];
+    dataArr[i][1] = data[i]["Plat"];
+    dataArr[i][2] = data[i]["Merek"];
+    dataArr[i][3] = data[i]["Jenis"];
+    dataArr[i][4] = data[i]["Tanggal Masuk"];
+  }
   for (let i = 0; i < data.length; i++) {
     const row = [
-      data[i]["Kode Parkir"],
-      data[i]["Plat"],
-      data[i]["Merek"],
-      data[i]["Jenis"],
-      data[i]["Tanggal Masuk"] ,
+      dataArr[i][0],
+      dataArr[i][1],
+      dataArr[i][2],
+      dataArr[i][3],
+      dataArr[i][4] ,
     ];
 
     let ditemukan = false;
