@@ -67,6 +67,7 @@ async function loadData() {
 loadData();
 function counter(arr) {
   let counter = 0;
+  // cek dataKosong
   for (let i = 0; i < arr.length ; i++) {
     if (arr[i][1] == "" || arr[i][1] == undefined) {
       counter++;
@@ -79,7 +80,7 @@ function counter(arr) {
 function toUpperManual(str) {
   let result = "";
   for (let i = 0; i < str.length; i++) {
-    let code = str.charCodeAt(i);
+    let code = str.charCodeAt(i); // ambilcode ascii
     // convert to UpperCase ASCII besar = kecil - 32
     if (code >= 97 && code <= 122) {
       result += String.fromCharCode(code - 32);
@@ -92,19 +93,35 @@ function toUpperManual(str) {
 
 // Bubble Sort A-Z
 function sortAZ(column, arr) {
-  const adaData = arr.filter((item) => item[column] && item[column].trim() !== "");
-  const kosong = arr.filter((item) => !item[column] || item[column].trim() === "");
-let a;
-let b;
+  let adaData = [];
+  let kosong = [];
+  let idxAda = 0;
+  let idxKosong = 0;
+
+  // Pisahkan data isi dan kosong secara manual
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i][column] && arr[i][column].trim() !== "") {
+      adaData[idxAda] = arr[i];
+      idxAda++;
+    } else {
+      kosong[idxKosong] = arr[i];
+      idxKosong++;
+    }
+  }
+
+  let a, b;
+
+  // Bubble Sort pada data yang ada isinya
   for (let i = 0; i < adaData.length - 1; i++) {
     for (let j = 0; j < adaData.length - i - 1; j++) {
-      if(column == 4){
+      if (column == 4) {
         a = parseInt(Date.parse(adaData[j][column]));
-        b =parseInt(Date.parse(adaData[j + 1][column]));
-      }else{
+        b = parseInt(Date.parse(adaData[j + 1][column]));
+      } else {
         a = toUpperManual(adaData[j][column]);
         b = toUpperManual(adaData[j + 1][column]);
       }
+
       if (a > b) {
         let temp = adaData[j];
         adaData[j] = adaData[j + 1];
@@ -112,31 +129,50 @@ let b;
       }
     }
   }
-  arr = adaData.concat(kosong); // gabungkan data isi + kosong concat = gabung array
-  tampilkanData(arr);
+
+  // Gabungkan isi dan kosong secara manual
+  let hasil = [];
+  for (let i = 0; i < adaData.length; i++) {
+    hasil[i] = adaData[i];
+  }
+  for (let i = 0; i < kosong.length; i++) {
+    hasil[adaData.length + i] = kosong[i];
+  }
+
+  tampilkanData(hasil);
 }
 
-// Bubble Sort Z-A
+// Bubble Sort Z-A tanpa filter dan concat
 function sortZA(column, arr) {
-  // filter apakah plat ada?
-  // trim = delete spasi
-  // ex {"Plat : "  "}  = > {"Plat" : ""}
-  const adaData = arr.filter(
-    (item) => item[column] && item[column].trim() !== "" 
-  ); // cek plat tidak kosong
-  const kosong = arr.filter(
-    (item) => !item[column] || item[column].trim() === "" 
-  );
+  let adaData = [];
+  let kosong = [];
+  let idxAda = 0;
+  let idxKosong = 0;
 
+  // Pisahkan data isi dan kosong secara manual
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i][column] && arr[i][column].trim() !== "") {
+      adaData[idxAda] = arr[i];
+      idxAda++;
+    } else {
+      kosong[idxKosong] = arr[i];
+      idxKosong++;
+    }
+  }
+
+  let a, b;
+  // Bubble Sort secara menurun (Z-A)
   for (let i = 0; i < adaData.length - 1; i++) {
     for (let j = 0; j < adaData.length - i - 1; j++) {
       if (column == 4) {
-        a = Date.parse(adaData[j][column]);
-        b = Date.parse(adaData[j + 1][column]);
+        // untuk tgl
+        a = parseInt(Date.parse(adaData[j][column]));
+        b = parseInt(Date.parse(adaData[j + 1][column]));
       } else {
         a = toUpperManual(adaData[j][column]);
         b = toUpperManual(adaData[j + 1][column]);
       }
+
       if (a < b) {
         let temp = adaData[j];
         adaData[j] = adaData[j + 1];
@@ -144,19 +180,28 @@ function sortZA(column, arr) {
       }
     }
   }
-  console.log(kosong);
 
-  arr = adaData.concat(kosong); // gabungkan data isi + kosong concat = gabung array
-  tampilkanData(arr);
+  // Gabungkan isi dan kosong secara manual
+  let hasil = [];
+  for (let i = 0; i < adaData.length; i++) {
+    hasil[i] = adaData[i];
+  }
+  for (let i = 0; i < kosong.length; i++) {
+    hasil[adaData.length + i] = kosong[i];
+  }
+
+  tampilkanData(hasil);
 }
+
 
 // Tampilkan tabel
 function tampilkanData(dataArray) {
   const tbody = document.querySelector("#tabelParkir tbody");
 
   tbody.innerHTML = "";
+  // untuk setiao baris
   dataArray.forEach((row) => {
-    const tr = document.createElement("tr");
+    const tr = document.createElement("tr"); // create elemen baris
     row.forEach((val) => {
       const td = document.createElement("td");
       td.textContent = val;
@@ -183,6 +228,7 @@ async function searchData() {
   const data = await res.json();
 
   let hasil = [];
+  let idxHasil = 0;
 
   for (let i = 0; i < data.length; i++) {
     const row = [
@@ -190,13 +236,13 @@ async function searchData() {
       data[i]["Plat"],
       data[i]["Merek"],
       data[i]["Jenis"],
-      data[i]["Tanggal Masuk"] ,
+      data[i]["Tanggal Masuk"],
     ];
 
     let ditemukan = false;
 
     for (let j = 0; j < row.length; j++) {
-      let kolom = row[j] || "";
+      let kolom = row[j] || ""; // jika kosong, isi dengan string kosong
       let kolomUpper = toUpperManual(kolom);
 
       for (let k = 0; k <= kolomUpper.length - keyword.length; k++) {
@@ -217,12 +263,13 @@ async function searchData() {
     }
 
     if (ditemukan) {
-      hasil.push(row);
+      // bandingan dengan row satu satu 
+      hasil[idxHasil] = row;
+      idxHasil++;
     }
   }
-  
 
-  if (hasil.length === 0) {
+  if (idxHasil === 0) {
     document.getElementById("hasil").textContent = "Data tidak ditemukan.";
     tampilkanData([]);
   } else {
@@ -230,6 +277,7 @@ async function searchData() {
     tampilkanData(hasil);
   }
 }
+
 
 
 document
@@ -244,7 +292,7 @@ document
     const data = await res.json();
     let dataArr = [];
     // convert array object to array 2d
-    for (let i = 0; i < data.length - 1; i++) {
+    for (let i = 0; i < data.length; i++) {
       dataArr[i] = [];
       dataArr[i][0] = data[i]["Kode Parkir"];
       dataArr[i][1] = data[i]["Plat"];

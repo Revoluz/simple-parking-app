@@ -1,30 +1,29 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const XLSX = require("xlsx");
-const fs = require("fs");
-const path = require("path");
-
-const app = express();
-const PORT = 3000;
+const express = require("express"); // library frameworkmuntuk node.js buat server
+const bodyParser = require("body-parser"); // ambil data json or form yang dikirim
+const XLSX = require("xlsx"); //libaray excell
+const fs = require("fs"); //filesystem untnuk  cek
+const path = require("path"); // mengelola file for all os
+const app = express(); //aplikasi express save to app
+const PORT = 3000; // tempat server berjalan
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.static("public"));
+app.use(bodyParser.json()); // membaca memprises body dlm format json
+app.use(express.static("public")); //req -> cari ke folder public
 
 // Endpoint menerima data parkir
 app.post("/formMasuk", (req, res) => {
-  const { plat, merek, jenis } = req.body;
+  const { plat, merek, jenis } = req.body; // mengambil nilai
   const waktuMasuk = formatDateTime(new Date()); // waktu saat ini
-  const filePath = path.join(__dirname, "data", "parkir.xlsx");
-  let workbook;
-  let worksheet;
-  let slotKosong = null;
+  const filePath = path.join(__dirname, "data", "parkir.xlsx"); //cari folder data > parkir.xlsx
+  let workbook; //file excell skrg
+  let worksheet; // halaman pertama (aktif) file excell
+  let slotKosong = null; //baris 0 pertama to kendaraan baru
 
   if (fs.existsSync(filePath)) {
     workbook = XLSX.readFile(filePath);
-    worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    worksheet = workbook.Sheets[workbook.SheetNames[0]]; // nama sheet 1 ambil datanya
+    const jsonData = XLSX.utils.sheet_to_json(worksheet); // ubah jdi array of object
   for (let i = 0; i < jsonData.length - 1; i++) {
       if (jsonData[i]["Plat"] == undefined ||jsonData[i]["Plat"] == "") {
         slotKosong = jsonData[i];
@@ -33,6 +32,7 @@ app.post("/formMasuk", (req, res) => {
     }
 
     if (slotKosong) {
+      // isi data baris koosng pertama
       slotKosong["Plat"] = plat;
       slotKosong["Merek"] = merek;
       slotKosong["Jenis"] = jenis;
@@ -41,15 +41,15 @@ app.post("/formMasuk", (req, res) => {
       return res.status(400).json({ message: "Semua slot penuh!" });
     }
 
-    // Konversi kembali ke worksheet
+    // setelah diisi Konversi kembali ke worksheet
     const updatedSheet = XLSX.utils.json_to_sheet(jsonData, {
-      header: Object.keys(slotKosong),
+      header: Object.keys(slotKosong), // ambil header
     });
-    workbook.Sheets[workbook.SheetNames[0]] = updatedSheet;
+    workbook.Sheets[workbook.SheetNames[0]] = updatedSheet; //ganti isi
   } else {
     return res.json({ message: "Data parkir tidak Ada!" });
   }
-  XLSX.writeFile(workbook, filePath);
+  XLSX.writeFile(workbook, filePath); // tulis
   return res.json({
     message: `Parkir berhasil. Slot: ${slotKosong["Kode Parkir"]}`,
   });
@@ -57,7 +57,7 @@ app.post("/formMasuk", (req, res) => {
 app.post("/formKeluar", (req, res) => {
   const { kodeParkir } = req.body;
   const filePath = path.join(__dirname, "data", "parkir.xlsx");
-  let workbook;
+  let workbook; 
   let worksheet;
   let slotHapus = null;
 
