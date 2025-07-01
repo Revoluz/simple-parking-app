@@ -25,7 +25,7 @@ app.post("/formMasuk", (req, res) => {
 
     worksheet = workbook.Sheets[workbook.SheetNames[0]]; // nama sheet 1 ambil datanya
     const jsonData = XLSX.utils.sheet_to_json(worksheet); // ubah jdi array of object
-  for (let i = 0; i < jsonData.length - 1; i++) {
+  for (let i = 0; i < jsonData.length; i++) {
       if (jsonData[i]["Plat"] == undefined ||jsonData[i]["Plat"] == "") {
         slotKosong = jsonData[i];
         break;
@@ -68,7 +68,7 @@ app.post("/formKeluar", (req, res) => {
     worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-    for (let i = 0; i < jsonData.length - 1; i++) {
+    for (let i = 0; i < jsonData.length; i++) {
       if (
         jsonData[i]["Kode Parkir"] == kodeParkir &&
         jsonData[i]["Status"] == "1"

@@ -9,7 +9,7 @@ document
       'input[name="jenisKendaraan"]:checked'
     );
 
-    if (!plat || !merek || !jenisRadio) {
+    if (!manualTrim(plat) || !manualTrim(merek) || !jenisRadio) {
       alert("Plat nomor, merek, dan jenis kendaraan wajib diisi.");
       return;
     }
@@ -32,38 +32,37 @@ document
   .addEventListener("submit", async function (e) {
     e.preventDefault();
     const kodeParkir = document.getElementById("Kode").value;
-    if (!kodeParkir) {
+    if (!manualTrim(kodeParkir)) {
       alert("Kode parkir wajib diisi.");
       return;
     }
+
     const res = await fetch("/formKeluar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ kodeParkir }),
     });
+
     const data = await res.json();
     if (res.ok) {
-      // Sukses
       Swal.fire({
         title: data.message,
         html: `Plat Nomor: <strong>${data.plat}</strong><br>Jenis: <strong>${data.jenis}</strong>`,
-        text: data.message,
         icon: "success",
         confirmButtonText: "OK",
       });
     } else {
-      // Gagal
       document.getElementById("hasil").textContent = data.message;
     }
     loadData();
   });
 
-// Load Data
+// Load data awal
 async function loadData() {
   const res = await fetch("/data");
   const data = await res.json();
   let dataArr = [];
-  // convert array object to array 2d
+
   for (let i = 0; i < data.length; i++) {
     dataArr[i] = [];
     dataArr[i][0] = data[i]["Kode Parkir"];
@@ -73,32 +72,32 @@ async function loadData() {
     dataArr[i][4] = data[i]["Tanggal Masuk"];
     dataArr[i][5] = data[i]["Status"];
   }
+
   counter(dataArr);
   tampilkanData(dataArr);
 }
 
-loadData();
+// Tampilkan jumlah slot kosong
 function counter(arr) {
   let counter = 0;
-  // cek dataKosong
   for (let i = 0; i < arr.length; i++) {
     if (arr[i][1] == "" || arr[i][1] == undefined) {
       counter++;
     }
   }
   const count = document.getElementById("count");
-  if(counter == 0){
-    count.innerHTML = "Slot Parkir Penuh ";
-  }else{
+  if (counter == 0) {
+    count.innerHTML = "Slot Parkir Penuh";
+  } else {
     count.innerHTML = "Slot Parkir Kosong : " + counter;
   }
 }
+
 // Uppercase manual
 function toUpperManual(str) {
   let result = "";
   for (let i = 0; i < str.length; i++) {
-    let code = str.charCodeAt(i); // ambilcode ascii
-    // convert to UpperCase ASCII besar = kecil - 32
+    let code = str.charCodeAt(i);
     if (code >= 97 && code <= 122) {
       result += String.fromCharCode(code - 32);
     } else {
@@ -108,32 +107,47 @@ function toUpperManual(str) {
   return result;
 }
 
-// Bubble Sort A-Z
+// Manual trim function
+function manualTrim(str) {
+  let start = 0;
+  let end = str.length - 1;
+
+  while (start <= end && (str[start] === " " || str[start] === "\t")) {
+    start++;
+  }
+
+  while (end >= start && (str[end] === " " || str[end] === "\t")) {
+    end--;
+  }
+
+  let hasil = "";
+  for (let i = start; i <= end; i++) {
+    hasil += str[i];
+  }
+
+  return hasil;
+}
+
 function sortAZ(column, arr) {
   let adaData = [];
   let kosong = [];
   let idxAda = 0;
   let idxKosong = 0;
 
-  // Pisahkan data isi dan kosong secara manual
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i][column] && arr[i][column].trim() !== "") {
-      adaData[idxAda] = arr[i];
-      idxAda++;
+    if (arr[i][column] && manualTrim(arr[i][column]) !== "") {
+      adaData[idxAda++] = arr[i];
     } else {
-      kosong[idxKosong] = arr[i];
-      idxKosong++;
+      kosong[idxKosong++] = arr[i];
     }
   }
 
   let a, b;
-
-  // Bubble Sort pada data yang ada isinya
-  for (let i = 0; i < adaData.length - 1; i++) {
-    for (let j = 0; j < adaData.length - i - 1; j++) {
+  for (let i = 0; i < idxAda - 1; i++) {
+    for (let j = 0; j < idxAda - i - 1; j++) {
       if (column == 4) {
-        a = parseInt(Date.parse(adaData[j][column]));
-        b = parseInt(Date.parse(adaData[j + 1][column]));
+        a = Date.parse(adaData[j][column]);
+        b = Date.parse(adaData[j + 1][column]);
       } else {
         a = toUpperManual(adaData[j][column]);
         b = toUpperManual(adaData[j + 1][column]);
@@ -147,44 +161,39 @@ function sortAZ(column, arr) {
     }
   }
 
-  // Gabungkan isi dan kosong secara manual
+  // Gabungkan secara manual
   let hasil = [];
-  for (let i = 0; i < adaData.length; i++) {
+  for (let i = 0; i < idxAda; i++) {
     hasil[i] = adaData[i];
   }
-  for (let i = 0; i < kosong.length; i++) {
-    hasil[adaData.length + i] = kosong[i];
+  for (let i = 0; i < idxKosong; i++) {
+    hasil[idxAda + i] = kosong[i];
   }
 
   tampilkanData(hasil);
 }
 
-// Bubble Sort Z-A tanpa filter dan concat
+// Bubble Sort Z-A
 function sortZA(column, arr) {
   let adaData = [];
   let kosong = [];
   let idxAda = 0;
   let idxKosong = 0;
 
-  // Pisahkan data isi dan kosong secara manual
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i][column] && arr[i][column].trim() !== "") {
-      adaData[idxAda] = arr[i];
-      idxAda++;
+    if (arr[i][column] && manualTrim(arr[i][column]) !== "") {
+      adaData[idxAda++] = arr[i];
     } else {
-      kosong[idxKosong] = arr[i];
-      idxKosong++;
+      kosong[idxKosong++] = arr[i];
     }
   }
 
   let a, b;
-  // Bubble Sort secara menurun (Z-A)
-  for (let i = 0; i < adaData.length - 1; i++) {
-    for (let j = 0; j < adaData.length - i - 1; j++) {
+  for (let i = 0; i < idxAda - 1; i++) {
+    for (let j = 0; j < idxAda - i - 1; j++) {
       if (column == 4) {
-        // untuk tgl
-        a = parseInt(Date.parse(adaData[j][column]));
-        b = parseInt(Date.parse(adaData[j + 1][column]));
+        a = Date.parse(adaData[j][column]);
+        b = Date.parse(adaData[j + 1][column]);
       } else {
         a = toUpperManual(adaData[j][column]);
         b = toUpperManual(adaData[j + 1][column]);
@@ -198,33 +207,30 @@ function sortZA(column, arr) {
     }
   }
 
-  // Gabungkan isi dan kosong secara manual
+  // Gabungkan secara manual
   let hasil = [];
-  for (let i = 0; i < adaData.length; i++) {
+  for (let i = 0; i < idxAda; i++) {
     hasil[i] = adaData[i];
   }
-  for (let i = 0; i < kosong.length; i++) {
-    hasil[adaData.length + i] = kosong[i];
+  for (let i = 0; i < idxKosong; i++) {
+    hasil[idxAda + i] = kosong[i];
   }
 
   tampilkanData(hasil);
 }
 
-// Tampilkan tabel
+
+// Tampilkan ke tabel
 function tampilkanData(dataArray) {
   for (let i = 0; i < dataArray.length; i++) {
-    if (dataArray[i][5] == "1" || dataArray[i][5] == "Terisi") {
-      dataArray[i][5] = "Terisi";
-    } else {
-      dataArray[i][5] = "Kosong";
-    }
+    dataArray[i][5] = dataArray[i][5] == "1" ? "Terisi" : "Kosong";
   }
-  const tbody = document.querySelector("#tabelParkir tbody");
 
+  const tbody = document.querySelector("#tabelParkir tbody");
   tbody.innerHTML = "";
-  // untuk setiao baris
+
   dataArray.forEach((row) => {
-    const tr = document.createElement("tr"); // create elemen baris
+    const tr = document.createElement("tr");
     row.forEach((val) => {
       const td = document.createElement("td");
       td.textContent = val;
@@ -234,16 +240,15 @@ function tampilkanData(dataArray) {
   });
 }
 
-// Linear Search
-// Event pencarian saat diketik
+// Search
 document.getElementById("searchInput").addEventListener("keyup", searchData);
 
 async function searchData() {
   const input = document.getElementById("searchInput").value;
-  const keyword = toUpperManual(input.trim());
+  const keyword = toUpperManual(manualTrim(input));
 
   if (keyword === "") {
-    loadData(); // tampilkan semua data kalau input kosong
+    loadData();
     return;
   }
 
@@ -252,66 +257,41 @@ async function searchData() {
 
   let hasil = [];
   let idxHasil = 0;
-  let dataArr = [];
-  // convert array object to array 2d
-  for (let i = 0; i < data.length; i++) {
-    dataArr[i] = [];
-    dataArr[i][0] = data[i]["Kode Parkir"];
-    dataArr[i][1] = data[i]["Plat"];
-    dataArr[i][2] = data[i]["Merek"];
-    dataArr[i][3] = data[i]["Jenis"];
-    dataArr[i][4] = data[i]["Tanggal Masuk"];
-    dataArr[i][5] = data[i]["Status"];
-  }
-  for (let i = 0; i < dataArr.length; i++) {
-    if (dataArr[i][5] == "1") {
-      dataArr[i][5] = "Terisi";
-    } else if (dataArr[i][5] == "0") {
-      dataArr[i][5] = "Kosong";
-    }
-  }
-  for (let i = 0; i < data.length; i++) {
 
-    const row = [
-      dataArr[i][0],
-      dataArr[i][1],
-      dataArr[i][2],
-      dataArr[i][3],
-      dataArr[i][4],
-      dataArr[i][5],
-    ];
+  for (let i = 0; i < data.length; i++) {
+    let row = [];
+    row[0] = data[i]["Kode Parkir"];
+    row[1] = data[i]["Plat"];
+    row[2] = data[i]["Merek"];
+    row[3] = data[i]["Jenis"];
+    row[4] = data[i]["Tanggal Masuk"];
+    row[5] = data[i]["Status"] == "1" ? "Terisi" : "Kosong";
 
     let ditemukan = false;
 
-    for (let j = 0; j < row.length; j++) {
-      let kolom = row[j] || ""; // jika kosong, isi dengan string kosong
-      let kolomUpper = toUpperManual(kolom);
+    for (let j = 0; j < 6; j++) {
+      let nilai = toUpperManual(row[j] || "");
+      let cocok = true;
 
-      for (let k = 0; k <= kolomUpper.length - keyword.length; k++) {
-        let cocok = true;
-        for (let l = 0; l < keyword.length; l++) {
-          if (kolomUpper[k + l] !== keyword[l]) {
-            cocok = false;
-            break;
-          }
-        }
-        if (cocok) {
-          ditemukan = true;
+      for (let k = 0; k < keyword.length; k++) {
+        if (nilai[k] !== keyword[k]) {
+          cocok = false;
           break;
         }
       }
 
-      if (ditemukan) break;
+      if (cocok) {
+        ditemukan = true;
+        break;
+      }
     }
 
     if (ditemukan) {
-      // bandingan dengan row satu satu
-      hasil[idxHasil] = row;
-      idxHasil++;
+      hasil[idxHasil++] = row;
     }
   }
 
-  if (idxHasil === 0) {
+  if (hasil.length === 0) {
     document.getElementById("hasil").textContent = "Data tidak ditemukan.";
     tampilkanData([]);
   } else {
@@ -320,18 +300,27 @@ async function searchData() {
   }
 }
 
+// Sorting form submit handler
 document
   .getElementById("sorting")
   .addEventListener("submit", async function (e) {
     e.preventDefault();
+
     const urutan = document.getElementById("urutan").value;
-    const column = document.getElementById("kolom").value;
-    // console.log(urutan);
-    // console.log(column);
+    const columnValue = document.getElementById("kolom").value;
+
+    if (!urutan || columnValue === "") {
+      alert("Silakan pilih kolom dan urutan terlebih dahulu.");
+      return;
+    }
+
+    const column = parseInt(columnValue);
+
     const res = await fetch("/data");
     const data = await res.json();
+
     let dataArr = [];
-    // convert array object to array 2d
+
     for (let i = 0; i < data.length; i++) {
       dataArr[i] = [];
       dataArr[i][0] = data[i]["Kode Parkir"];
@@ -341,9 +330,13 @@ document
       dataArr[i][4] = data[i]["Tanggal Masuk"];
       dataArr[i][5] = data[i]["Status"];
     }
-    if (urutan == "ASC") {
+
+    if (urutan === "ASC") {
       sortAZ(column, dataArr);
-    } else if (urutan == "DESC") {
+    } else if (urutan === "DESC") {
       sortZA(column, dataArr);
     }
   });
+
+// Panggil load data pertama kali
+loadData();
