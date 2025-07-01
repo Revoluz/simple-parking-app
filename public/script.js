@@ -42,7 +42,19 @@ document
       body: JSON.stringify({ kodeParkir }),
     });
     const data = await res.json();
-    document.getElementById("hasil").textContent = data.message;
+    if (res.ok) {
+      // Sukses
+      Swal.fire({
+        title: data.message,
+        html: `Plat Nomor: <strong>${data.plat}</strong><br>Jenis: <strong>${data.jenis}</strong>`,
+        text: data.message,
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+    } else {
+      // Gagal
+      document.getElementById("hasil").textContent = data.message;
+    }
     loadData();
   });
 
@@ -59,6 +71,7 @@ async function loadData() {
     dataArr[i][2] = data[i]["Merek"];
     dataArr[i][3] = data[i]["Jenis"];
     dataArr[i][4] = data[i]["Tanggal Masuk"];
+    dataArr[i][5] = data[i]["Status"];
   }
   counter(dataArr);
   tampilkanData(dataArr);
@@ -74,7 +87,11 @@ function counter(arr) {
     }
   }
   const count = document.getElementById("count");
-  count.innerHTML = "Slot Parkir Kosong : " + counter;
+  if(counter == 0){
+    count.innerHTML = "Slot Parkir Penuh ";
+  }else{
+    count.innerHTML = "Slot Parkir Kosong : " + counter;
+  }
 }
 // Uppercase manual
 function toUpperManual(str) {
@@ -195,6 +212,13 @@ function sortZA(column, arr) {
 
 // Tampilkan tabel
 function tampilkanData(dataArray) {
+  for (let i = 0; i < dataArray.length; i++) {
+    if (dataArray[i][5] == "1" || dataArray[i][5] == "Terisi") {
+      dataArray[i][5] = "Terisi";
+    } else {
+      dataArray[i][5] = "Kosong";
+    }
+  }
   const tbody = document.querySelector("#tabelParkir tbody");
 
   tbody.innerHTML = "";
@@ -228,14 +252,33 @@ async function searchData() {
 
   let hasil = [];
   let idxHasil = 0;
-
+  let dataArr = [];
+  // convert array object to array 2d
   for (let i = 0; i < data.length; i++) {
+    dataArr[i] = [];
+    dataArr[i][0] = data[i]["Kode Parkir"];
+    dataArr[i][1] = data[i]["Plat"];
+    dataArr[i][2] = data[i]["Merek"];
+    dataArr[i][3] = data[i]["Jenis"];
+    dataArr[i][4] = data[i]["Tanggal Masuk"];
+    dataArr[i][5] = data[i]["Status"];
+  }
+  for (let i = 0; i < dataArr.length; i++) {
+    if (dataArr[i][5] == "1") {
+      dataArr[i][5] = "Terisi";
+    } else if (dataArr[i][5] == "0") {
+      dataArr[i][5] = "Kosong";
+    }
+  }
+  for (let i = 0; i < data.length; i++) {
+
     const row = [
-      data[i]["Kode Parkir"],
-      data[i]["Plat"],
-      data[i]["Merek"],
-      data[i]["Jenis"],
-      data[i]["Tanggal Masuk"],
+      dataArr[i][0],
+      dataArr[i][1],
+      dataArr[i][2],
+      dataArr[i][3],
+      dataArr[i][4],
+      dataArr[i][5],
     ];
 
     let ditemukan = false;
@@ -283,8 +326,8 @@ document
     e.preventDefault();
     const urutan = document.getElementById("urutan").value;
     const column = document.getElementById("kolom").value;
-    console.log(urutan);
-    console.log(column);
+    // console.log(urutan);
+    // console.log(column);
     const res = await fetch("/data");
     const data = await res.json();
     let dataArr = [];
@@ -296,6 +339,7 @@ document
       dataArr[i][2] = data[i]["Merek"];
       dataArr[i][3] = data[i]["Jenis"];
       dataArr[i][4] = data[i]["Tanggal Masuk"];
+      dataArr[i][5] = data[i]["Status"];
     }
     if (urutan == "ASC") {
       sortAZ(column, dataArr);

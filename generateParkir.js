@@ -4,12 +4,12 @@ const path = require("path");
 
 // Buat 20 slot dengan kode parkir tetap KP001 - KP020
 const data = [
-  ["Kode Parkir", "Plat", "Merek", "Jenis", "Tanggal Masuk"],
+  ["Kode Parkir", "Plat", "Merek", "Jenis", "Tanggal Masuk","Status"],
 ];
 
 for (let i = 1; i <= 20; i++) {
   const kode = "KP" + String(i).padStart(3, "0");
-  data.push([kode, "", "", "", "", ""]); // slot kosong
+  data.push([kode, "", "", "", "", "0"]); // slot kosong
 }
 
 // Buat sheet dan workbook

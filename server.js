@@ -38,6 +38,7 @@ app.post("/formMasuk", (req, res) => {
       slotKosong["Merek"] = merek;
       slotKosong["Jenis"] = jenis;
       slotKosong["Tanggal Masuk"] = waktuMasuk;
+      slotKosong["Status"] = "1";
     } else {
       return res.status(400).json({ message: "Semua slot penuh!" });
     }
@@ -58,7 +59,7 @@ app.post("/formMasuk", (req, res) => {
 app.post("/formKeluar", (req, res) => {
   const { kodeParkir } = req.body;
   const filePath = path.join(__dirname, "data", "parkir.xlsx");
-  let workbook; 
+  let workbook;
   let worksheet;
   let slotHapus = null;
 
@@ -67,18 +68,24 @@ app.post("/formKeluar", (req, res) => {
     worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-
     for (let i = 0; i < jsonData.length - 1; i++) {
-      if ((jsonData[i]["Kode Parkir"] == kodeParkir)&&(jsonData[i]["Plat"] !="")) {
+      if (
+        jsonData[i]["Kode Parkir"] == kodeParkir &&
+        jsonData[i]["Status"] == "1"
+      ) {
         slotHapus = jsonData[i];
         break;
       }
     }
+
     if (slotHapus) {
+      var platNomor = slotHapus["Plat"];
+      var jenis = slotHapus["Jenis"];
       slotHapus["Plat"] = "";
       slotHapus["Merek"] = "";
       slotHapus["Jenis"] = "";
       slotHapus["Tanggal Masuk"] = "";
+      slotHapus["Status"] = "0";
     } else {
       return res.status(400).json({ message: "Slot Parkir Kosong!" });
     }
@@ -92,10 +99,13 @@ app.post("/formKeluar", (req, res) => {
     return res.json({ message: "Data parkir tidak Ada!" });
   }
   XLSX.writeFile(workbook, filePath);
-  return res.json({
-    message: `Parkir berhasil dihapus. Slot: ${slotHapus["Kode Parkir"]}`,
+  return res.status(200).json({
+    plat: platNomor,
+    jenis: jenis,
+    message: "Kendaraan keluar",
   });
 });
+
 
 
 
