@@ -25,19 +25,18 @@ app.post("/formMasuk", (req, res) => {
     workbook = XLSX.readFile(filePath);
     worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-    for (let i = 0; i < jsonData.length - 1; i++) {
-      if (jsonData[i]["Plat"] == "") {
+  for (let i = 0; i < jsonData.length - 1; i++) {
+      if (jsonData[i]["Plat"] == undefined ||jsonData[i]["Plat"] == "") {
         slotKosong = jsonData[i];
         break;
       }
     }
+
     if (slotKosong) {
       slotKosong["Plat"] = plat;
       slotKosong["Merek"] = merek;
       slotKosong["Jenis"] = jenis;
       slotKosong["Tanggal Masuk"] = waktuMasuk;
-      slotKosong["Tanggal Keluar"] = "";
     } else {
       return res.status(400).json({ message: "Semua slot penuh!" });
     }
@@ -79,7 +78,6 @@ app.post("/formKeluar", (req, res) => {
       slotHapus["Merek"] = "";
       slotHapus["Jenis"] = "";
       slotHapus["Tanggal Masuk"] = "";
-      slotHapus["Tanggal Keluar"] = "";
     } else {
       return res.status(400).json({ message: "Slot Parkir Kosong!" });
     }

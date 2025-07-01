@@ -15,7 +15,7 @@
           <div class="card card-custom">
             <div class="card-header bg-primary-custom text-white d-flex justify-content-between">
               <h5 class="m-0">Masuk Parkir</h5>
-              <h5 class="m-0">Empty : 200</h5>
+              <h5 class="m-0" id="count">Empty : 200</h5>
             </div>
             <div class="card-body">
               <form id="formMasuk">
@@ -75,9 +75,25 @@
 
       <!-- Tombol Sort dan Cari -->
       <div class="row mt-5 mb-3 align-items-center">
-        <div class="col-md-6 mb-2">
-          <button class="btn btn-outline-primary btn-sm" onclick="sortAZ()">Sort A-Z</button>
-          <button class="btn btn-outline-primary btn-sm" onclick="sortZA()">Sort Z-A</button>
+        <div class="col-md-6 ">
+          <form action="" id="sorting" class="d-flex gap-2 m-0 align-items-end">
+            <select class="form-select" aria-label="Default select example" id="urutan">
+              <option selected>Input Urutan</option>
+              <option value="ASC">ASC</option>
+              <option value="DESC">DESC</option>
+            </select>
+            <select class="form-select" aria-label="Default select example" id="kolom">
+              <option selected>Kolom</option>
+              <option value="0">Kode</option>
+              <option value="1">Plat Nomor</option>
+              <option value="2">Jenis</option>
+              <option value="3">Merek</option>
+              <option value="4">Tanggal Masuk</option>
+            </select>
+            <button class="btn btn-primary ">Sorting</button>
+            <!-- <button class="btn btn-outline-primary btn-sm" onclick="sortAZ()">Sort A-Z</button>
+            <button class="btn btn-outline-primary btn-sm" onclick="sortZA()">Sort Z-A</button> -->
+          </form>
         </div>
         <div class="col-md-6">
           <div class="input-group">
